@@ -1,0 +1,240 @@
+'use client'
+
+import React, { useState, FormEvent } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Mail, Lock, AlertCircle, Pizza, Utensils, Coffee, User, MapPin, Phone } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
+
+export default function Register() {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [address, setAddress] = useState('')
+  const [phone, setPhone] = useState('')
+  const [error, setError] = useState('')
+  const navigate = useNavigate()
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    try {
+      const response = await axios.post('http://localhost:5000/api/users/register', {
+        name,
+        email,
+        password,
+        address,
+        phone
+      })
+      localStorage.setItem('token', response.data.token)
+      navigate('/')
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response) {
+        console.error('Response data:', err.response.data)
+        setError(err.response.data.message || 'Error registering user. Please try again.')
+      } else {
+        console.error('Error:', err)
+        setError('An unexpected error occurred. Please try again.')
+      }
+    }
+  }
+
+  const foodIcons = [Pizza, Utensils, Coffee]
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-orange-400 to-red-500 p-4 overflow-hidden">
+      <motion.div
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-md relative"
+      >
+        {foodIcons.map((Icon, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              delay: 0.5 + index * 0.2,
+              duration: 0.5,
+              repeat: Infinity,
+              repeatType: 'reverse',
+              repeatDelay: 5
+            }}
+            className={`absolute ${index === 0 ? '-top-16 -left-16' : index === 1 ? '-bottom-16 -left-16' : '-top-16 -right-16'}`}
+          >
+            <Icon size={64} className="text-white opacity-50" />
+          </motion.div>
+        ))}
+        <motion.div
+          initial={{ scale: 0.9, rotateY: -15 }}
+          animate={{ scale: 1, rotateY: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="bg-white shadow-xl rounded-lg overflow-hidden"
+        >
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="p-8"
+          >
+            <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Create your account</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="name" className="text-sm font-medium text-gray-700 block">
+                  Name
+                </label>
+                <motion.div
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="relative"
+                >
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 pl-10"
+                    placeholder="Your name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                </motion.div>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="email-address" className="text-sm font-medium text-gray-700 block">
+                  Email address
+                </label>
+                <motion.div
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                  className="relative"
+                >
+                  <input
+                    id="email-address"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 pl-10"
+                    placeholder="Email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                </motion.div>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="password" className="text-sm font-medium text-gray-700 block">
+                  Password
+                </label>
+                <motion.div
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.6 }}
+                  className="relative"
+                >
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete="new-password"
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 pl-10"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                </motion.div>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="address" className="text-sm font-medium text-gray-700 block">
+                  Address
+                </label>
+                <motion.div
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.7 }}
+                  className="relative"
+                >
+                  <input
+                    id="address"
+                    name="address"
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 pl-10"
+                    placeholder="Your address"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                  />
+                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                </motion.div>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="phone" className="text-sm font-medium text-gray-700 block">
+                  Phone
+                </label>
+                <motion.div
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.8 }}
+                  className="relative"
+                >
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 pl-10"
+                    placeholder="Your phone number"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                  />
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                </motion.div>
+              </div>
+              <AnimatePresence>
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="flex items-center space-x-2 text-red-600"
+                  >
+                    <AlertCircle size={18} />
+                    <span className="text-sm">{error}</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <button
+                  type="submit"
+                  className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
+                >
+                  Register
+                </button>
+              </motion.div>
+            </form>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.3 }}
+            className="px-8 py-4 bg-gray-50 border-t border-gray-100 text-center"
+          >
+            <p className="text-sm text-gray-600">
+              Already have an account?{' '}
+              <a href="/login" className="text-orange-600 hover:underline">
+                Sign in
+              </a>
+            </p>
+          </motion.div>
+        </motion.div>
+      </motion.div>
+    </div>
+  )
+}
