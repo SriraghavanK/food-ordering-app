@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Minus, Plus, Star, ShoppingCart, Clock } from 'lucide-react';
+import { Minus, Plus, Star, ShoppingCart, Clock, X } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 
-export default function Component() {
+export default function Menu() {
   const { restaurantId } = useParams();
   const navigate = useNavigate();
   const { token } = useAuth();
@@ -16,6 +16,7 @@ export default function Component() {
   const [userRatings, setUserRatings] = useState({});
   const [quantities, setQuantities] = useState({});
   const [addedToCart, setAddedToCart] = useState({});
+  const [fullScreenImage, setFullScreenImage] = useState(null);
 
   useEffect(() => {
     const fetchRestaurantAndMenu = async () => {
@@ -52,22 +53,19 @@ export default function Component() {
   const addToCart = async (menuItemId) => {
     try {
       if (quantities[menuItemId] === 0) return;
-  
+
       await axios.post('http://localhost:5000/api/cart', {
         menuItemId,
         quantity: quantities[menuItemId]
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-  
-      // Set added to cart state
+
       setAddedToCart(prev => ({ ...prev, [menuItemId]: true }));
-  
-      // Reset the quantities for the added item
-      setQuantities(prev => ({ ...prev, [menuItemId]: 0 }));
-  
-      // Reset the added to cart state after 2 seconds
+
+      // Reset the quantity after a delay
       setTimeout(() => {
+        setQuantities(prev => ({ ...prev, [menuItemId]: 0 }));
         setAddedToCart(prev => ({ ...prev, [menuItemId]: false }));
       }, 2000);
     } catch (err) {
@@ -75,7 +73,6 @@ export default function Component() {
       setError('Failed to add item to cart. Please try again.');
     }
   };
-  
 
   const rateMenuItem = async (menuItemId, rating) => {
     try {
@@ -185,18 +182,23 @@ export default function Component() {
                 exit={{ opacity: 0, scale: 0.9 }}
                 whileHover={{ scale: 1.03 }}
                 transition={{ duration: 0.3 }}
-                className="bg-white rounded-lg shadow-md overflow-hidden border border-orange-200 h-[32rem] flex flex-col"
+                className="bg-white rounded-lg shadow-md overflow-hidden border border-orange-200 flex flex-col max-h-[600px]"
               >
-                <div className="relative h-80">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
+                <div className="relative h-48">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-full h-full object-cover cursor-pointer"
+                    onClick={() => setFullScreenImage(item.image)}
+                  />
                   <div className="absolute top-0 right-0 bg-orange-500 text-white px-2 py-1 rounded-bl-lg">
                     {item.averageRating.toFixed(1)} ★
                   </div>
                 </div>
-                <div className="p-4 flex flex-col flex-grow">
+                <div className="p-4 flex flex-col flex-grow overflow-y-auto">
                   <h2 className="text-xl font-semibold mb-2 text-orange-800">{item.name}</h2>
-                  <p className="text-orange-600 mb-4 flex-grow overflow-y-auto">{item.description}</p>
-                  <div className="flex justify-between items-center mb-4">
+                  <p className="text-orange-600 mb-4 text-sm line-clamp-3">{item.description}</p>
+                  <div className="flex justify-between items-center mt-auto pt-4">
                     <span className="text-2xl font-bold text-orange-500">₹{item.price.toFixed(2)}</span>
                     <div className="flex items-center">
                       {[1, 2, 3, 4, 5].map((star) => (
@@ -212,7 +214,7 @@ export default function Component() {
                       ))}
                     </div>
                   </div>
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex justify-between items-center mt-4">
                     <div className="flex items-center bg-orange-100 rounded-full">
                       <motion.button
                         whileHover={{ scale: 1.1 }}
@@ -234,46 +236,64 @@ export default function Component() {
                       </motion.button>
                     </div>
                     <motion.button
-  whileHover={quantities[item._id] > 0 && !addedToCart[item._id] ? { scale: 1.05 } : {}}
-  whileTap={quantities[item._id] > 0 && !addedToCart[item._id] ? { scale: 0.95 } : {}}
-  onClick={() => addToCart(item._id)}
-  className={`py-2 px-4 rounded-full transition duration-300 flex items-center ${
-    addedToCart[item._id] 
-      ? 'bg-green-500 text-white' 
-      : (quantities[item._id] > 0 
-          ? 'bg-orange-500 hover:bg-orange-600 text-white font-bold' 
-          : 'bg-gray-300 text-gray-500 cursor-not-allowed')
-  }`}
-  disabled={quantities[item._id] === 0}
->
-  {addedToCart[item._id] ? (
-    <>
-      <span>Added!</span>
-    </>
-  ) : (
-    <>
-      <ShoppingCart className="w-5 h-5 mr-2" />
-      <span>Add to Cart</span>
-    </>
-  )}
-</motion.button>
-
-
-                  </div>
-                  {addedToCart[item._id] && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="text-green-500 font-semibold text-sm"
+                      whileHover={quantities[item._id] > 0 && !addedToCart[item._id] ? { scale: 1.05 } : {}}
+                      whileTap={quantities[item._id] > 0 && !addedToCart[item._id] ? { scale: 0.95 } : {}}
+                      onClick={() => addToCart(item._id)}
+                      className={`py-2 px-4 rounded-full transition duration-300 flex items-center ${
+                        addedToCart[item._id]
+                          ? 'bg-green-500 text-white'
+                          : (quantities[item._id] > 0
+                              ? 'bg-orange-500 hover:bg-orange-600 text-white font-bold'
+                              : 'bg-gray-300 text-gray-500 cursor-not-allowed')
+                      }`}
+                      disabled={quantities[item._id] === 0}
                     >
-                      Added to cart!
-                    </motion.div>
-                  )}
+                      {addedToCart[item._id] ? (
+                        <motion.span
+                          initial={{ opacity: 0, scale: 0.5 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                           Added ✓
+                        </motion.span>
+                      ) : (
+                        <>
+                        <ShoppingCart className="h-5 w-5 inline me-1" />
+                        Add to Cart
+                        </>
+                      )}
+                    </motion.button>
+                  </div>
+                  
                 </div>
               </motion.div>
             ))}
           </AnimatePresence>
+        </motion.div>
+      )}
+
+      {fullScreenImage && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+          onClick={() => setFullScreenImage(null)}
+        >
+          <motion.div
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0.8 }}
+            className="relative max-w-4xl max-h-full p-4"
+          >
+            <img src={fullScreenImage} alt="Full screen view" className="max-w-full max-h-full object-contain" />
+            <button
+              className="absolute top-4 right-4 text-white hover:text-orange-500 transition-colors duration-200"
+              onClick={() => setFullScreenImage(null)}
+            >
+              <X size={24} />
+            </button>
+          </motion.div>
         </motion.div>
       )}
     </motion.div>

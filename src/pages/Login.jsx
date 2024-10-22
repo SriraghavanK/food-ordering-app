@@ -170,7 +170,7 @@ export default function Component() {
                     <li>Contact support if issues persist</li>
                   </ul>
                   <a href="#" className="block mt-2 text-orange-600 hover:underline">Reset your password</a>
-                  <a href="/src/components/Contact" className="block mt-1 text-orange-600 hover:underline">Contact support</a>
+                  <a href="#" className="block mt-1 text-orange-600 hover:underline">Contact support</a>
                 </motion.div>
               )}
             </AnimatePresence>
