@@ -771,149 +771,153 @@ export default function EnhancedAdminPanel() {
             </div>
           </motion.div>
         )}
-
-{activeTab === 'orders' && (
-        <motion.div
-          key="orders"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="space-y-4">
-            {filteredOrders.map((order) => (
-              <motion.div
-                key={order._id}
-                className="bg-white rounded-lg shadow-lg overflow-hidden border border-orange-200"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                whileHover={{ scale: 1.02 }}
-              >
-                <div className="p-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="font-bold text-xl text-orange-700">Order ID: {order._id}</h3>
-                    <motion.div
-                      className={`px-3 py-1 rounded-full flex items-center ${
-                        order.status === 'Delivered' ? 'bg-green-100 text-green-800' :
-                        order.status === 'Out for Delivery' ? 'bg-purple-100 text-purple-800' :
-                        order.status === 'Preparing' ? 'bg-blue-100 text-blue-800' :
-                        'bg-yellow-100 text-yellow-800'
-                      }`}
-                    >
-                      {getStatusIcon(order.status)}
-                      <span className="ml-2 text-sm font-medium">{order.status}</span>
-                    </motion.div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="flex items-center">
-                      <Users className="text-orange-500 mr-2" />
-                      <p className="text-orange-800">{order.user?.name || 'Unknown'}</p>
-                    </div>
-                    <div className="flex items-center">
-                      <FaRupeeSign className="text-green-500 mr-2" />
-                      <p className="text-green-800 font-semibold">{order.total.toFixed(2)}</p>
-                    </div>
-                    <div className="flex items-center">
-                      <Clock className="text-blue-500 mr-2" />
-                      <p className="text-blue-800">{new Date(order.createdAt).toLocaleString()}</p>
-                    </div>
-                    {order.discount > 0 && (
-                      <div className="flex items-center">
-                        <Tag className="text-orange-500 mr-2" />
-                        <p className="text-orange-800">Discount: ₹{order.discount.toFixed(2)}</p>
-                      </div>
-                    )}
-                  </div>
-                  <div className="mb-4">
-                    <label htmlFor={`status-${order._id}`} className="block text-sm font-medium text-orange-700 mb-1">Update Status:</label>
-                    <select
-                      id={`status-${order._id}`}
-                      value={order.status}
-                      onChange={(e) => updateOrderStatus(order._id, e.target.value)}
-                      className="w-full p-2 border border-orange-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white text-orange-800"
-                    >
-                      <option value="Pending">Pending</option>
-                      <option value="Preparing">Preparing</option>
-                      <option value="Out for Delivery">Out for Delivery</option>
-                      <option value="Delivered">Delivered</option>
-                    </select>
-                  </div>
-        
-                  <AnimatePresence>
-                    {expandedOrder === order._id && (
+      {activeTab === 'orders' && (
+          <motion.div
+            key="orders"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="space-y-4">
+              {filteredOrders.map((order) => (
+                <motion.div
+                  key={order._id}
+                  className="bg-white rounded-lg shadow-lg overflow-hidden border border-orange-200"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  whileHover={{ scale: 1.02 }}
+                >
+                  <div className="p-6">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="font-bold text-xl text-orange-700">Order ID: {order._id}</h3>
                       <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="overflow-hidden mt-4 bg-orange-50 p-4 rounded-md"
+                        className={`px-3 py-1 rounded-full flex items-center ${
+                          order.status === 'Delivered' ? 'bg-green-100 text-green-800' :
+                          order.status === 'Out for Delivery' ? 'bg-purple-100 text-purple-800' :
+                          order.status === 'Preparing' ? 'bg-blue-100 text-blue-800' :
+                          'bg-yellow-100 text-yellow-800'
+                        }`}
                       >
-                        <h4 className="font-semibold mb-2 text-orange-700">Order Items:</h4>
-                        <ul className="space-y-2">
-                          {order.items.map((item, index) => (
-                            <li key={index} className="flex justify-between items-center text-orange-800">
-                              <span>{item.menuItem?.name || 'Unknown item'} x {item.quantity}</span>
-                              <span className="font-medium">₹{((item.menuItem?.price || 0) 
- * item.quantity).toFixed(2)}</span>
-                            </li>
-                          ))}
-                        </ul>
-                        <div className="mt-4 pt-4 border-t border-orange-200">
-                          <div className="flex justify-between items-center text-orange-800">
-                            <span>Subtotal:</span>
-                            <span>₹{order.subtotal.toFixed(2)}</span>
-                          </div>
-                          {order.discount > 0 && (
-                            <div className="flex justify-between items-center text-green-600">
-                              <span>Discount:</span>
-                              <span>-₹{order.discount.toFixed(2)}</span>
-                            </div>
-                          )}
-                          <div className="flex justify-between items-center font-semibold text-orange-800 mt-2">
-                            <span>Total:</span>
-                            <span>₹{order.total.toFixed(2)}</span>
-                          </div>
-                        </div>
+                        {getStatusIcon(order.status)}
+                        <span className="ml-2 text-sm font-medium">{order.status}</span>
                       </motion.div>
-                    )}
-                  </AnimatePresence>
-        
-                  <div className="mt-4 flex justify-between items-center">
-                    <motion.button
-                      onClick={() => setExpandedOrder(expandedOrder === order._id ? null : order._id)}
-                      className="text-orange-600 hover:text-orange-800 flex items-center"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      {expandedOrder === order._id ? (
-                        <>
-                          <ChevronUp className="mr-1" size={20} />
-                          Hide Details
-                        </>
-                      ) : (
-                        <>
-                          <ChevronDown className="mr-1" size={20} />
-                          Show Details
-                        </>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div className="flex items-center">
+                        <Users className="text-orange-500 mr-2" />
+                        <p className="text-orange-800">{order.user?.name || 'Unknown'}</p>
+                      </div>
+                      <div className="flex items-center">
+                        <FaRupeeSign className="text-green-500 mr-2" />
+                        <p className="text-green-800 font-semibold">{order.total.toFixed(2)}</p>
+                      </div>
+                      <div className="flex items-center">
+                        <Clock className="text-blue-500 mr-2" />
+                        <p className="text-blue-800">{new Date(order.createdAt).toLocaleString()}</p>
+                      </div>
+                    </div>
+                    <div className="mb-4">
+                      <label htmlFor={`status-${order._id}`} className="block text-sm font-medium text-orange-700 mb-1">Update Status:</label>
+                      <select
+                        id={`status-${order._id}`}
+                        value={order.status}
+                        onChange={(e) => updateOrderStatus(order._id, e.target.value)}
+                        className="w-full p-2 border border-orange-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white text-orange-800"
+                      >
+                        <option value="Pending">Pending</option>
+                        <option value="Preparing">Preparing</option>
+                        <option value="Out for Delivery">Out for Delivery</option>
+                        <option value="Delivered">Delivered</option>
+                      </select>
+                    </div>
+          
+                    <AnimatePresence>
+                      {expandedOrder === order._id && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="overflow-hidden mt-4 bg-orange-50 p-4 rounded-md"
+                        >
+                          <h4 className="font-semibold mb-2 text-orange-700">Order Items:</h4>
+                          <ul className="space-y-2">
+                            {order.items.map((item, index) => (
+                              <li key={index} className="flex justify-between items-center text-orange-800">
+                                <span>{item.menuItem?.name || 'Unknown item'} x {item.quantity}</span>
+                                <span className="font-medium">₹{((item.menuItem?.price || 0) * item.quantity).toFixed(2)}</span>
+                              </li>
+                            ))}
+                          </ul>
+                          <div className="mt-4 pt-4 border-t border-orange-200">
+                            <div className="flex justify-between items-center text-orange-800">
+                              <span>Subtotal:</span>
+                              <span>₹{order.subtotal.toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-orange-800">
+                              <span>Delivery Fee:</span>
+                              <span>₹{order.deliveryFee.toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-orange-800">
+                              <span>Tax:</span>
+                              <span>₹{order.tax.toFixed(2)}</span>
+                            </div>
+                            {order.discount > 0 && (
+                              <div className="flex justify-between items-center text-green-600">
+                                <span className="flex items-center">
+                                  <Tag className="mr-1" size={16} />
+                                  Discount:
+                                </span>
+                                <span>-₹{order.discount.toFixed(2)}</span>
+                              </div>
+                            )}
+                            <div className="flex justify-between items-center font-semibold text-orange-800 mt-2">
+                              <span>Total:</span>
+                              <span>₹{order.total.toFixed(2)}</span>
+                            </div>
+                          </div>
+                        </motion.div>
                       )}
-                    </motion.button>
-                    <motion.button
-                      onClick={() => deleteOrder(order._id)}
-                      className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300 flex items-center"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Trash2 className="mr-2" size={16} />
-                      Delete Order
-                    </motion.button>
+                    </AnimatePresence>
+          
+                    <div className="mt-4 flex justify-between items-center">
+                      <motion.button
+                        onClick={() => setExpandedOrder(expandedOrder === order._id ? null : order._id)}
+                        className="text-orange-600 hover:text-orange-800 flex items-center"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        {expandedOrder === order._id ? (
+                          <>
+                            <ChevronUp className="mr-1" size={20} />
+                            Hide Details
+                          </>
+                        ) : (
+                          <>
+                            <ChevronDown className="mr-1" size={20} />
+                            Show Details
+                          </>
+                        )}
+                      </motion.button>
+                      <motion.button
+                        onClick={() => deleteOrder(order._id)}
+                        className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300 flex items-center"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Trash2 className="mr-2" size={16} />
+                        Delete Order
+                      </motion.button>
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      )}
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}  
+
       </AnimatePresence>
 
       {editingItem && (

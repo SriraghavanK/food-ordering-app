@@ -6,7 +6,7 @@ const About = () => {
     <div className="min-h-screen bg-white -mt-8 -ms-8 -me-8 -mb-8">
       <header className="bg-[#e9ebec] text-black py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold mb-4">About FoodieExpress</h1>
+          <h1 className="text-4xl font-bold mb-4">About SB FOODS</h1>
           <p className="text-xl">Delivering happiness, one meal at a time.</p>
         </div>
       </header>
@@ -15,7 +15,7 @@ const About = () => {
         <section className="mb-12">
           <h2 className="text-3xl font-bold mb-6 text-gray-800">Our Story</h2>
           <p className="text-gray-600 mb-4">
-            Founded in 2020, FoodieExpress was born out of a simple idea: to connect food lovers with their favorite local restaurants, making delicious meals accessible to everyone, anytime, anywhere.
+            Founded in 2020, SB FOODS was born out of a simple idea: to connect food lovers with their favorite local restaurants, making delicious meals accessible to everyone, anytime, anywhere.
           </p>
           <p className="text-gray-600 mb-4">
             What started as a small startup has now grown into a thriving platform, serving thousands of customers daily across multiple cities. Our journey has been fueled by our passion for food and our commitment to supporting local businesses.
@@ -80,7 +80,7 @@ const About = () => {
         <section className="mb-12">
           <h2 className="text-3xl font-bold mb-6 text-gray-800">Our Mission</h2>
           <p className="text-gray-600 mb-4">
-            At FoodieExpress, our mission is to revolutionize the way people experience food delivery. We strive to create a seamless connection between restaurants and food lovers, empowering local businesses and satisfying cravings with just a few taps.
+            At SB FOODS, our mission is to revolutionize the way people experience food delivery. We strive to create a seamless connection between restaurants and food lovers, empowering local businesses and satisfying cravings with just a few taps.
           </p>
           <p className="text-gray-600 mb-4">
             We're committed to innovation, exceptional service, and fostering a love for diverse cuisines. Our goal is not just to deliver food, but to deliver experiences, bringing the joy of restaurant-quality meals to homes, offices, and gatherings across the nation.

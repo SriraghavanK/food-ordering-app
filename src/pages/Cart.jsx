@@ -274,21 +274,7 @@ export default function Cart() {
         </div>
       </div>
       
-      <div className="mt-12 bg-orange-100 rounded-lg p-6 shadow-md">
-        <h2 className="text-2xl font-semibold mb-4 text-orange-800 flex items-center">
-          <Gift className="mr-2" size={24} />
-          Special Offer
-        </h2>
-        <p className="text-orange-700 mb-4">
-          Get 20% off on your first order! Use code <span className="font-bold">WELCOME20</span> at checkout.
-        </p>
-        <Link
-          to="/restaurants"
-          className="inline-block bg-orange-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-orange-600 transition duration-300"
-        >
-          Order Now
-        </Link>
-      </div>
+     
       
       {cartItems.length > 0 && (
         <div className="mt-12 bg-yellow-100 rounded-lg p-6 shadow-md flex items-start">

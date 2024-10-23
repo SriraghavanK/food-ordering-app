@@ -7,12 +7,12 @@ const FAQ = () => {
 
   const faqData = [
     {
-      question: "How does FoodieExpress work?",
-      answer: "FoodieExpress is a food delivery platform that connects you with local restaurants. Simply browse restaurants, select your items, place your order, and track it in real-time. Our delivery partners will bring the food right to your doorstep."
+      question: "How does SB FOODS work?",
+      answer: "SB FOODS is a food delivery platform that connects you with local restaurants. Simply browse restaurants, select your items, place your order, and track it in real-time. Our delivery partners will bring the food right to your doorstep."
     },
     {
       question: "What are the delivery fees?",
-      answer: "Delivery fees vary depending on the restaurant's distance and other factors. The exact fee will be displayed before you place your order. We also offer a subscription service, FoodieExpress+, which provides free delivery on eligible orders."
+      answer: "Delivery fees vary depending on the restaurant's distance and other factors. The exact fee will be displayed before you place your order. We also offer a subscription service, SB FOODS, which provides free delivery on eligible orders."
     },
     {
       question: "How long does delivery take?",
@@ -50,7 +50,7 @@ const FAQ = () => {
       <header className="bg-[#e9ebec] text-black py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-bold mb-4">Frequently Asked Questions</h1>
-          <p className="text-xl">Find answers to common questions about FoodieExpress</p>
+          <p className="text-xl">Find answers to common questions about SB FOODS</p>
         </div>
       </header>
 

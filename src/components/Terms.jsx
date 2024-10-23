@@ -11,7 +11,7 @@ const Terms = () => {
   const sections = [
     {
       title: '1. Acceptance of Terms',
-      content: 'By accessing or using the FoodieExpress platform, including our website, mobile application, and services (collectively, the "Service"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you may not use the Service.',
+      content: 'By accessing or using the SB FOODS platform, including our website, mobile application, and services (collectively, the "Service"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you may not use the Service.',
       icon: <Book className="text-orange-500" size={24} />
     },
     {
@@ -36,7 +36,7 @@ const Terms = () => {
     },
     {
       title: '6. Intellectual Property',
-      content: 'The Service and its original content, features, and functionality are owned by FoodieExpress and are protected by international copyright, trademark, patent, trade secret, and other intellectual property or proprietary rights laws.',
+      content: 'The Service and its original content, features, and functionality are owned by SB FOODS and are protected by international copyright, trademark, patent, trade secret, and other intellectual property or proprietary rights laws.',
       icon: <Copyright className="text-orange-500" size={24} />
     },
     {
@@ -46,17 +46,17 @@ const Terms = () => {
     },
     {
       title: '8. Limitation of Liability',
-      content: 'In no event shall FoodieExpress, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Service.',
+      content: 'In no event shall SB FOODS, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Service.',
       icon: <Scale className="text-orange-500" size={24} />
     },
     {
       title: '9. Governing Law',
-      content: 'These Terms shall be governed and construed in accordance with the laws of [Your Country/State], without regard to its conflict of law provisions.',
+      content: 'These Terms shall be governed and construed in accordance with the laws of [TamilNadu/Chennai], without regard to its conflict of law provisions.',
       icon: <Globe className="text-orange-500" size={24} />
     },
     {
       title: '10. Contact Us',
-      content: 'If you have any questions about these Terms, please contact us at legal@foodieexpress.com.',
+      content: 'If you have any questions about these Terms, please contact us at legal@SBFOODS.com.',
       icon: <HelpCircle className="text-orange-500" size={24} />
     }
   ];
@@ -66,7 +66,7 @@ const Terms = () => {
       <header className="bg-[#e9ebec] text-black py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-bold mb-4">Terms of Service</h1>
-          <p className="text-xl">Please read these terms carefully before using FoodieExpress</p>
+          <p className="text-xl">Please read these terms carefully before using SB FOODS</p>
         </div>
       </header>
 

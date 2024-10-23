@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { 
   Package, Clock, AlertTriangle, ChevronDown, ChevronUp,
-  Truck, CheckSquare, XCircle, RefreshCw, Search
+  Truck, CheckSquare, XCircle, RefreshCw, Search, Tag
 } from 'lucide-react';
 import { FaRupeeSign } from 'react-icons/fa';
 
@@ -210,10 +210,37 @@ export default function OrderTracking() {
                         {order.items.map((item, index) => (
                           <li key={index} className="flex justify-between items-center text-orange-800">
                             <span>{item.menuItem?.name || 'Unknown item'} x {item.quantity}</span>
-                            <span className="font-medium">{((item.menuItem?.price || 0) * item.quantity).toFixed(2)}</span>
+                            <span className="font-medium">₹{((item.price || 0) * item.quantity).toFixed(2)}</span>
                           </li>
                         ))}
                       </ul>
+                      <div className="mt-4 pt-4 border-t border-orange-200">
+                        <div className="flex justify-between items-center text-orange-800">
+                          <span>Subtotal:</span>
+                          <span>₹{order.subtotal.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-orange-800">
+                          <span>Delivery Fee:</span>
+                          <span>₹{order.deliveryFee.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-orange-800">
+                          <span>Tax:</span>
+                          <span>₹{order.tax.toFixed(2)}</span>
+                        </div>
+                        {order.discount > 0 && (
+                          <div className="flex justify-between items-center text-green-600">
+                            <span className="flex items-center">
+                              <Tag className="mr-1" size={16} />
+                              Discount:
+                            </span>
+                            <span>-₹{order.discount.toFixed(2)}</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between items-center font-semibold text-orange-800 mt-2">
+                          <span>Total:</span>
+                          <span>₹{order.total.toFixed(2)}</span>
+                        </div>
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>

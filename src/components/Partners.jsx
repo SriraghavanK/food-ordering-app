@@ -6,7 +6,7 @@ const Partners = () => {
     <div className="min-h-screen bg-white -mt-8 -ms-8 -me-8 -mb-8">
       <header className="bg-[#e9ebec] text-black py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold mb-4">Partner with FoodieExpress</h1>
+          <h1 className="text-4xl font-bold mb-4">Partner with SB FOODS</h1>
           <p className="text-xl">Grow your business with the leading food delivery platform</p>
         </div>
       </header>
@@ -15,7 +15,7 @@ const Partners = () => {
         <section className="mb-12">
           <h2 className="text-3xl font-bold mb-6 text-gray-800">Why Partner with Us?</h2>
           <p className="text-gray-600 mb-4">
-            Joining FoodieExpress as a restaurant partner opens up a world of opportunities for your business. We provide the technology, support, and customer base to help you reach more diners and grow your revenue.
+            Joining SB FOODS as a restaurant partner opens up a world of opportunities for your business. We provide the technology, support, and customer base to help you reach more diners and grow your revenue.
           </p>
           <p className="text-gray-600 mb-4">
             Our platform is designed to seamlessly integrate with your existing operations, making it easy to manage orders, track performance, and optimize your delivery service.
@@ -60,9 +60,9 @@ const Partners = () => {
         </section>
 
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">Join FoodieExpress Today</h2>
+          <h2 className="text-3xl font-bold mb-6 text-gray-800">Join SB FOODS Today</h2>
           <p className="text-gray-600 mb-4">
-            Ready to take your restaurant to the next level? Joining FoodieExpress is quick and easy. Fill out the form below, and one of our partner specialists will get in touch with you to guide you through the onboarding process.
+            Ready to take your restaurant to the next level? Joining SB FOODS is quick and easy. Fill out the form below, and one of our partner specialists will get in touch with you to guide you through the onboarding process.
           </p>
           <form className="max-w-lg">
             <div className="mb-4">

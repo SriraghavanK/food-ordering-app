@@ -304,30 +304,7 @@ export default function Checkout() {
           </div>
         </div>
         <div>
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h3 className="text-xl font-semibold mb-4">Promo Code</h3>
-            <div className="flex space-x-2">
-              <input
-                type="text"
-                value={promoCode}
-                onChange={(e) => setPromoCode(e.target.value)}
-                placeholder="Enter promo code"
-                className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-              />
-              <button
-                onClick={applyPromoCode}
-                className="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition duration-300"
-              >
-                Apply
-              </button>
-            </div>
-            {discount > 0 && (
-              <div className="mt-2 text-green-600 flex items-center">
-                <Tag className="mr-2" size={16} />
-                <span>Promo code applied successfully!</span>
-              </div>
-            )}
-          </div>
+          
           <div className="bg-white rounded-lg shadow-md p-6">
             <h3 className="text-xl font-semibold mb-4">Payment</h3>
             <Elements stripe={stripePromise}>

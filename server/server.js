@@ -391,7 +391,11 @@ app.post('/api/orders', auth, async (req, res) => {
       return res.status(400).json({ message: 'Cart is empty' });
     }
 
-    const total = cartItems.reduce((sum, item) => sum + item.menuItem.price * item.quantity, 0);
+    const subtotal = cartItems.reduce((sum, item) => sum + item.menuItem.price * item.quantity, 0);
+    const deliveryFee = 30; // Fixed delivery fee
+    const taxRate = 0.05; // 5% tax rate
+    const tax = subtotal * taxRate;
+    const total = subtotal + deliveryFee + tax;
 
     const order = new Order({
       user: req.user._id,
@@ -400,7 +404,11 @@ app.post('/api/orders', auth, async (req, res) => {
         quantity: item.quantity,
         price: item.menuItem.price
       })),
+      subtotal: subtotal,
+      deliveryFee: deliveryFee,
+      tax: tax,
       total: total,
+      status: 'Pending'
     });
 
     await order.save();
@@ -410,8 +418,8 @@ app.post('/api/orders', auth, async (req, res) => {
 
     res.status(201).json(order);
   } catch (error) {
-    console.error('Order error:', error);
-    res.status(500).json({ message: 'Error creating order' });
+    console.error('Order creation error:', error);
+    res.status(500).json({ message: 'Error creating order', error: error.message });
   }
 });
 
@@ -424,6 +432,7 @@ app.get('/api/orders', auth, async (req, res) => {
   }
 });
 
+
 app.delete('/api/orders/:orderId', auth, async (req, res) => {
   try {
     const order = await Order.findOne({ _id: req.params.orderId, user: req.user._id });
@@ -433,11 +442,13 @@ app.delete('/api/orders/:orderId', auth, async (req, res) => {
     }
 
     if (order.status !== 'Pending') {
-      return res.status(400).json({ message: 'Cannot cancel  order that is not pending' });
+      return res.status(400).json({ message: 'Cannot cancel order that is not pending' });
     }
 
+    // Update only the status field
     order.status = 'Cancelled';
-    await order.save();
+    await order.save({ validateBeforeSave: false });
+
     res.json({ message: 'Order cancelled successfully' });
   } catch (error) {
     console.error('Error cancelling order:', error);
