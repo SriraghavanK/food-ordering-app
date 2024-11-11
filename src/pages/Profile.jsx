@@ -34,9 +34,12 @@ export default function Profile() {
       }
 
       try {
-        const response = await axios.get("http://localhost:5000/api/orders", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.get(
+          "https://food-ordering-app-vee4.onrender.com/api/orders",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setOrders(response.data);
         setIsLoading(false);
       } catch (err) {

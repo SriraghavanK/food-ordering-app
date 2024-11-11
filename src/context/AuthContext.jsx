@@ -21,38 +21,51 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData, isRestaurant = false) => {
     try {
-      const endpoint = isRestaurant ? "/api/restaurants/register" : "/api/users/register";
+      const endpoint = isRestaurant
+        ? "/api/restaurants/register"
+        : "/api/users/register";
       console.log(`Attempting registration at: ${endpoint}`);
-      console.log('Registration data:', userData);
-      
-      const response = await axios.post(`http://localhost:5000${endpoint}`, userData);
-      
-      console.log('Registration response:', response.data);
-      
+      console.log("Registration data:", userData);
+
+      const response = await axios.post(
+        `https://food-ordering-app-vee4.onrender.com${endpoint}`,
+        userData
+      );
+
+      console.log("Registration response:", response.data);
+
       setUser(response.data.user);
       setToken(response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("isRestaurant", JSON.stringify(isRestaurant));
-      axios.defaults.headers.common["Authorization"] = `Bearer ${response.data.token}`;
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${response.data.token}`;
       axios.defaults.headers.common["x-auth-token"] = response.data.token;
-      
+
       return response.data;
     } catch (error) {
       console.error("Registration error:", error);
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          console.error('Error response:', error.response.data);
-          throw new Error(`Server error: ${error.response.status} - ${JSON.stringify(error.response.data)}`);
+          console.error("Error response:", error.response.data);
+          throw new Error(
+            `Server error: ${error.response.status} - ${JSON.stringify(
+              error.response.data
+            )}`
+          );
         } else if (error.request) {
-          console.error('No response received:', error.request);
-          throw new Error("No response received from server. Please try again later.");
+          console.error("No response received:", error.request);
+          throw new Error(
+            "No response received from server. Please try again later."
+          );
         } else {
-          console.error('Error setting up request:', error.message);
+          console.error("Error setting up request:", error.message);
           throw new Error(`Error setting up request: ${error.message}`);
         }
       } else {
-        console.error('Unexpected error:', error);
+        console.error("Unexpected error:", error);
         throw new Error("An unexpected error occurred during registration.");
       }
     }
@@ -60,29 +73,42 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password, isRestaurant = false) => {
     try {
-      const endpoint = isRestaurant ? "/api/restaurants/login" : "/api/users/login";
+      const endpoint = isRestaurant
+        ? "/api/restaurants/login"
+        : "/api/users/login";
       console.log(`Attempting login at endpoint: ${endpoint}`);
-      
-      const response = await axios.post(`http://localhost:5000${endpoint}`, { email, password });
-      
-      console.log('Login response:', response.data);
-  
+
+      const response = await axios.post(
+        `https://food-ordering-app-vee4.onrender.com${endpoint}`,
+        { email, password }
+      );
+
+      console.log("Login response:", response.data);
+
       if (response.data.user && response.data.token) {
         setUser(response.data.user);
         setToken(response.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.user));
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("isRestaurant", JSON.stringify(isRestaurant));
-        axios.defaults.headers.common["Authorization"] = `Bearer ${response.data.token}`;
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${response.data.token}`;
         axios.defaults.headers.common["x-auth-token"] = response.data.token;
-        
+
         return response.data;
       } else {
         throw new Error("Invalid response format from server");
       }
     } catch (error) {
-      console.error("Login error:", error.response ? error.response.data : error.message);
-      throw new Error(error.response?.data?.message || "An unexpected error occurred during login");
+      console.error(
+        "Login error:",
+        error.response ? error.response.data : error.message
+      );
+      throw new Error(
+        error.response?.data?.message ||
+          "An unexpected error occurred during login"
+      );
     }
   };
 

@@ -50,7 +50,7 @@ const CheckoutForm = ({ onSuccess, total, discount }) => {
       }
 
       const response = await axios.post(
-        "http://localhost:5000/api/payments",
+        "https://food-ordering-app-vee4.onrender.com/api/payments",
         {
           paymentMethodId: paymentMethod.id,
           amount: Math.round((total - discount) * 100), // Convert to cents
@@ -94,7 +94,7 @@ const CheckoutForm = ({ onSuccess, total, discount }) => {
   const createOrder = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/orders",
+        "https://food-ordering-app-vee4.onrender.com/api/orders",
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -181,9 +181,12 @@ export default function Checkout() {
 
   const fetchCartItems = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/cart", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        "https://food-ordering-app-vee4.onrender.com/api/cart",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setCartItems(response.data);
       setIsLoading(false);
     } catch (err) {

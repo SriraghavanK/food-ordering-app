@@ -29,9 +29,12 @@ export default function OrderTracking() {
   const fetchOrders = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get("http://localhost:5000/api/orders", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        "https://food-ordering-app-vee4.onrender.com/api/orders",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setOrders(response.data);
       setIsLoading(false);
     } catch (err) {
@@ -47,9 +50,12 @@ export default function OrderTracking() {
 
   const cancelOrder = async (orderId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/orders/${orderId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `https://food-ordering-app-vee4.onrender.com/api/orders/${orderId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order._id === orderId ? { ...order, status: "Cancelled" } : order

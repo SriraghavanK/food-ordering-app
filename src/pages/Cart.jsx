@@ -37,9 +37,12 @@ export default function Cart() {
         setIsLoading(false);
         return;
       }
-      const response = await axios.get("http://localhost:5000/api/cart", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        "https://food-ordering-app-vee4.onrender.com/api/cart",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setCartItems(response.data);
       setIsLoading(false);
     } catch (err) {
@@ -52,7 +55,7 @@ export default function Cart() {
   const updateQuantity = async (id, newQuantity) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/cart/${id}`,
+        `https://food-ordering-app-vee4.onrender.com/api/cart/${id}`,
         { quantity: newQuantity },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -69,9 +72,12 @@ export default function Cart() {
 
   const removeItem = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/cart/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `https://food-ordering-app-vee4.onrender.com/api/cart/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setCartItems((prevItems) => prevItems.filter((item) => item._id !== id));
     } catch (err) {
       console.error("Error removing item:", err);

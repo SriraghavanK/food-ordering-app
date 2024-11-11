@@ -109,7 +109,7 @@ export default function EnhancedAdminPanel() {
     setIsLoading(true);
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/restaurants",
+        "https://food-ordering-app-vee4.onrender.com/api/restaurants",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -127,7 +127,7 @@ export default function EnhancedAdminPanel() {
     try {
       const menuItemsPromises = restaurants.map((restaurant) =>
         axios.get(
-          `http://localhost:5000/api/restaurants/${restaurant._id}/menu`,
+          `https://food-ordering-app-vee4.onrender.com/api/restaurants/${restaurant._id}/menu`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -149,7 +149,7 @@ export default function EnhancedAdminPanel() {
     setIsLoading(true);
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/admin/orders",
+        "https://food-ordering-app-vee4.onrender.com/api/admin/orders",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -229,7 +229,7 @@ export default function EnhancedAdminPanel() {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/restaurants/${newItem.restaurantId}/menu`,
+        `https://food-ordering-app-vee4.onrender.com/api/restaurants/${newItem.restaurantId}/menu`,
         newItem,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -256,7 +256,7 @@ export default function EnhancedAdminPanel() {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/restaurants",
+        "https://food-ordering-app-vee4.onrender.com/api/restaurants",
         newRestaurant,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -284,7 +284,7 @@ export default function EnhancedAdminPanel() {
     setIsLoading(true);
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/admin/orders/${orderId}`,
+        `https://food-ordering-app-vee4.onrender.com/api/admin/orders/${orderId}`,
         { status },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -312,7 +312,7 @@ export default function EnhancedAdminPanel() {
       setIsLoading(true);
       try {
         await axios.delete(
-          `http://localhost:5000/api/admin/orders/${orderId}`,
+          `https://food-ordering-app-vee4.onrender.com/api/admin/orders/${orderId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -332,7 +332,7 @@ export default function EnhancedAdminPanel() {
     setIsLoading(true);
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/restaurants/${editingItem.restaurant}/menu/${editingItem._id}`,
+        `https://food-ordering-app-vee4.onrender.com/api/restaurants/${editingItem.restaurant}/menu/${editingItem._id}`,
         editingItem,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -357,7 +357,7 @@ export default function EnhancedAdminPanel() {
       setIsLoading(true);
       try {
         await axios.delete(
-          `http://localhost:5000/api/restaurants/${restaurantId}/menu/${itemId}`,
+          `https://food-ordering-app-vee4.onrender.com/api/restaurants/${restaurantId}/menu/${itemId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -377,7 +377,7 @@ export default function EnhancedAdminPanel() {
     setIsLoading(true);
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/restaurants/${editingRestaurant._id}`,
+        `https://food-ordering-app-vee4.onrender.com/api/restaurants/${editingRestaurant._id}`,
         editingRestaurant,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -406,7 +406,7 @@ export default function EnhancedAdminPanel() {
       setIsLoading(true);
       try {
         await axios.delete(
-          `http://localhost:5000/api/restaurants/${restaurantId}`,
+          `https://food-ordering-app-vee4.onrender.com/api/restaurants/${restaurantId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -451,12 +451,12 @@ export default function EnhancedAdminPanel() {
   const approveRestaurant = async (id) => {
     setIsLoading(true);
     try {
-      const restaurant = restaurants.find(r => r._id === id);
+      const restaurant = restaurants.find((r) => r._id === id);
       if (!restaurant) {
         throw new Error("Restaurant not found");
       }
       const response = await axios.put(
-        `http://localhost:5000/api/restaurants/${id}/approve`,
+        `https://food-ordering-app-vee4.onrender.com/api/restaurants/${id}/approve`,
         {
           phone: restaurant.phone,
           email: restaurant.email,
@@ -465,13 +465,16 @@ export default function EnhancedAdminPanel() {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      console.log('Approval response:', response.data);
+      console.log("Approval response:", response.data);
       setSuccess("Restaurant approved successfully!");
-      setRestaurants(prevRestaurants => 
-        prevRestaurants.filter(restaurant => restaurant._id !== id)
+      setRestaurants((prevRestaurants) =>
+        prevRestaurants.filter((restaurant) => restaurant._id !== id)
       );
     } catch (error) {
-      console.error('Error approving restaurant:', error.response?.data || error.message);
+      console.error(
+        "Error approving restaurant:",
+        error.response?.data || error.message
+      );
       setError("Error approving restaurant: " + getErrorMessage(error));
     } finally {
       setIsLoading(false);
@@ -481,15 +484,15 @@ export default function EnhancedAdminPanel() {
     setIsLoading(true);
     try {
       await axios.put(
-        `http://localhost:5000/api/restaurants/${id}/reject`,
+        `https://food-ordering-app-vee4.onrender.com/api/restaurants/${id}/reject`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
       setSuccess("Restaurant rejected successfully!");
-      setRestaurants(prevRestaurants => 
-        prevRestaurants.filter(restaurant => restaurant._id !== id)
+      setRestaurants((prevRestaurants) =>
+        prevRestaurants.filter((restaurant) => restaurant._id !== id)
       );
     } catch (error) {
       setError("Error rejecting restaurant: " + getErrorMessage(error));
@@ -737,8 +740,8 @@ export default function EnhancedAdminPanel() {
             </div>
           </motion.div>
         )}
-          </AnimatePresence>
-          <AnimatePresence mode="wait">
+      </AnimatePresence>
+      <AnimatePresence mode="wait">
         {activeTab === "restaurants" && (
           <motion.div
             key="restaurants"
@@ -747,57 +750,63 @@ export default function EnhancedAdminPanel() {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <h2 className="text-2xl font-semibold mb-4 text-orange-700">Restaurant Approvals</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-orange-700">
+              Restaurant Approvals
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {restaurants.filter(restaurant => !restaurant.isApproved).map((restaurant) => (
-                <motion.div
-                  key={restaurant._id}
-                  className="bg-white rounded-lg shadow-lg overflow-hidden border border-orange-200"
-                  whileHover={{ scale: 1.03 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <img
-                    src={restaurant.image}
-                    alt={restaurant.name}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="p-4">
-                    <h3 className="font-bold text-xl mb-2 text-orange-700">
-                      {restaurant.name}
-                    </h3>
-                    <p className="text-orange-600 mb-2">{restaurant.cuisine}</p>
-                    <p className="text-sm text-orange-500 mb-2">
-                      Phone: {restaurant.phone || "Not provided"}
-                    </p>
-                    <p className="text-sm text-orange-500 mb-4">
-                      Email: {restaurant.email || "Not provided"}
-                    </p>
-                    <p className="text-sm text-orange-500 mb-4">
-                      Status: {restaurant.isApproved ? "Approved" : "Pending"}
-                    </p>
-                    <div className="flex flex-wrap justify-between">
-                      {!restaurant.isApproved && (
+              {restaurants
+                .filter((restaurant) => !restaurant.isApproved)
+                .map((restaurant) => (
+                  <motion.div
+                    key={restaurant._id}
+                    className="bg-white rounded-lg shadow-lg overflow-hidden border border-orange-200"
+                    whileHover={{ scale: 1.03 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <img
+                      src={restaurant.image}
+                      alt={restaurant.name}
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="p-4">
+                      <h3 className="font-bold text-xl mb-2 text-orange-700">
+                        {restaurant.name}
+                      </h3>
+                      <p className="text-orange-600 mb-2">
+                        {restaurant.cuisine}
+                      </p>
+                      <p className="text-sm text-orange-500 mb-2">
+                        Phone: {restaurant.phone || "Not provided"}
+                      </p>
+                      <p className="text-sm text-orange-500 mb-4">
+                        Email: {restaurant.email || "Not provided"}
+                      </p>
+                      <p className="text-sm text-orange-500 mb-4">
+                        Status: {restaurant.isApproved ? "Approved" : "Pending"}
+                      </p>
+                      <div className="flex flex-wrap justify-between">
+                        {!restaurant.isApproved && (
+                          <motion.button
+                            onClick={() => approveRestaurant(restaurant._id)}
+                            className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition duration-300 flex items-center mb-2 sm:mb-0"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            <CheckCircle className="mr-1" size={16} /> Approve
+                          </motion.button>
+                        )}
                         <motion.button
-                          onClick={() => approveRestaurant(restaurant._id)}
-                          className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition duration-300 flex items-center mb-2 sm:mb-0"
+                          onClick={() => rejectRestaurant(restaurant._id)}
+                          className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition duration-300 flex items-center"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                         >
-                          <CheckCircle className="mr-1" size={16} /> Approve
+                          <XCircle className="mr-1" size={16} /> Reject
                         </motion.button>
-                      )}
-                      <motion.button
-                        onClick={() => rejectRestaurant(restaurant._id)}
-                        className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition duration-300 flex items-center"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <XCircle className="mr-1" size={16} /> Reject
-                      </motion.button>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                ))}
             </div>
 
             <div className="bg-white rounded-lg shadow-lg p-6 mb-8 mt-8">
@@ -820,7 +829,10 @@ export default function EnhancedAdminPanel() {
                   placeholder="Cuisine"
                   value={newRestaurant.cuisine}
                   onChange={(e) =>
-                    setNewRestaurant({ ...newRestaurant, cuisine: e.target.value })
+                    setNewRestaurant({
+                      ...newRestaurant,
+                      cuisine: e.target.value,
+                    })
                   }
                   className="w-full p-2 border border-orange-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
                   required
@@ -830,7 +842,10 @@ export default function EnhancedAdminPanel() {
                   placeholder="Image URL"
                   value={newRestaurant.image}
                   onChange={(e) =>
-                    setNewRestaurant({ ...newRestaurant, image: e.target.value })
+                    setNewRestaurant({
+                      ...newRestaurant,
+                      image: e.target.value,
+                    })
                   }
                   className="w-full p-2 border border-orange-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
                   required
@@ -840,7 +855,10 @@ export default function EnhancedAdminPanel() {
                   placeholder="Phone"
                   value={newRestaurant.phone}
                   onChange={(e) =>
-                    setNewRestaurant({ ...newRestaurant, phone: e.target.value })
+                    setNewRestaurant({
+                      ...newRestaurant,
+                      phone: e.target.value,
+                    })
                   }
                   className="w-full p-2 border border-orange-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
                   required
@@ -850,7 +868,10 @@ export default function EnhancedAdminPanel() {
                   placeholder="Email"
                   value={newRestaurant.email}
                   onChange={(e) =>
-                    setNewRestaurant({ ...newRestaurant, email: e.target.value })
+                    setNewRestaurant({
+                      ...newRestaurant,
+                      email: e.target.value,
+                    })
                   }
                   className="w-full p-2 border border-orange-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
                   required
@@ -861,18 +882,26 @@ export default function EnhancedAdminPanel() {
                     id="isLateNight"
                     checked={newRestaurant.isLateNight}
                     onChange={(e) =>
-                      setNewRestaurant({ ...newRestaurant, isLateNight: e.target.checked })
+                      setNewRestaurant({
+                        ...newRestaurant,
+                        isLateNight: e.target.checked,
+                      })
                     }
                     className="mr-2"
                   />
-                  <label htmlFor="isLateNight">Available for Late Night Delivery</label>
+                  <label htmlFor="isLateNight">
+                    Available for Late Night Delivery
+                  </label>
                 </div>
                 <input
                   type="text"
                   placeholder="Location"
                   value={newRestaurant.location}
                   onChange={(e) =>
-                    setNewRestaurant({ ...newRestaurant, location: e.target.value })
+                    setNewRestaurant({
+                      ...newRestaurant,
+                      location: e.target.value,
+                    })
                   }
                   className="w-full p-2 border border-orange-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
                   required
@@ -893,7 +922,6 @@ export default function EnhancedAdminPanel() {
                 </motion.button>
               </form>
             </div>
-
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredRestaurants.map((restaurant) => (
@@ -1368,7 +1396,7 @@ export default function EnhancedAdminPanel() {
         </motion.div>
       )}
 
-{editingRestaurant && (
+      {editingRestaurant && (
         <motion.div
           className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center"
           initial={{ opacity: 0 }}

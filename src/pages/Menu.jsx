@@ -30,9 +30,11 @@ export default function Menu() {
     const fetchRestaurantAndMenu = async () => {
       try {
         const [restaurantResponse, menuResponse] = await Promise.all([
-          axios.get(`http://localhost:5000/api/restaurants/${restaurantId}`),
           axios.get(
-            `http://localhost:5000/api/restaurants/${restaurantId}/menu`
+            `https://food-ordering-app-vee4.onrender.com/api/restaurants/${restaurantId}`
+          ),
+          axios.get(
+            `https://food-ordering-app-vee4.onrender.com/api/restaurants/${restaurantId}/menu`
           ),
         ]);
         setRestaurant(restaurantResponse.data);
@@ -67,7 +69,7 @@ export default function Menu() {
       if (quantities[menuItemId] === 0) return;
 
       await axios.post(
-        "http://localhost:5000/api/cart",
+        "https://food-ordering-app-vee4.onrender.com/api/cart",
         {
           menuItemId,
           quantity: quantities[menuItemId],
@@ -92,7 +94,7 @@ export default function Menu() {
   const rateMenuItem = async (menuItemId, rating) => {
     try {
       await axios.post(
-        `http://localhost:5000/api/menu/${menuItemId}/rate`,
+        `https://food-ordering-app-vee4.onrender.com/api/menu/${menuItemId}/rate`,
         { rating },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -100,7 +102,7 @@ export default function Menu() {
       );
       setUserRatings({ ...userRatings, [menuItemId]: rating });
       const menuResponse = await axios.get(
-        `http://localhost:5000/api/restaurants/${restaurantId}/menu`
+        `https://food-ordering-app-vee4.onrender.com/api/restaurants/${restaurantId}/menu`
       );
       setMenuItems(menuResponse.data);
     } catch (err) {

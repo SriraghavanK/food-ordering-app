@@ -15,11 +15,13 @@ export default function Restaurants() {
 
   const fetchRestaurants = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/restaurants");
+      const response = await axios.get(
+        "https://food-ordering-app-vee4.onrender.com/api/restaurants"
+      );
       const restaurantsWithMenuItems = await Promise.all(
         response.data.map(async (restaurant) => {
           const menuResponse = await axios.get(
-            `http://localhost:5000/api/restaurants/${restaurant._id}/menu`
+            `https://food-ordering-app-vee4.onrender.com/api/restaurants/${restaurant._id}/menu`
           );
           return { ...restaurant, menuItems: menuResponse.data };
         })

@@ -16,7 +16,9 @@ export default function Component() {
 
   const fetchLateNightRestaurants = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/restaurants");
+      const response = await axios.get(
+        "https://food-ordering-app-vee4.onrender.com/api/restaurants"
+      );
       const lateNightOptions = response.data.filter(
         (restaurant) => restaurant.isLateNight
       );

@@ -8,7 +8,7 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = async (item) => {
     try {
-      await axios.post("http://localhost:5000/api/cart", {
+      await axios.post("https://food-ordering-app-vee4.onrender.com/api/cart", {
         ...item,
         quantity: 1,
       });
