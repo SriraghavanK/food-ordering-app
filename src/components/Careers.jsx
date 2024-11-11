@@ -1,24 +1,31 @@
-import React from 'react';
-import { Briefcase, Users, Rocket, Heart } from 'lucide-react';
+import React from "react";
+import { Briefcase, Users, Rocket, Heart } from "lucide-react";
 
 const Careers = () => {
   return (
     <div className="min-h-screen bg-white -mt-8 -ms-8 -me-8 -mb-8">
       <header className="bg-[#e9ebec] text-black py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold mb-4">Careers at SB FOODS</h1>
+          <h1 className="text-4xl font-bold mb-4">Careers at SRV FOODS</h1>
           <p className="text-xl">Join us in revolutionizing food delivery!</p>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">Why Join Us?</h2>
+          <h2 className="text-3xl font-bold mb-6 text-gray-800">
+            Why Join Us?
+          </h2>
           <p className="text-gray-600 mb-4">
-            At SB FOODS, we're more than just a food delivery service. We're a team of passionate individuals working together to transform the way people experience food. Our fast-paced, innovative environment offers exciting opportunities for growth and development.
+            At SRV FOODS, we're more than just a food delivery service. We're a
+            team of passionate individuals working together to transform the way
+            people experience food. Our fast-paced, innovative environment
+            offers exciting opportunities for growth and development.
           </p>
           <p className="text-gray-600 mb-4">
-            We believe in fostering a culture of creativity, collaboration, and continuous learning. When you join SB FOODS, you become part of a diverse family that values your unique skills and perspectives.
+            We believe in fostering a culture of creativity, collaboration, and
+            continuous learning. When you join SRV FOODS, you become part of a
+            diverse family that values your unique skills and perspectives.
           </p>
         </section>
 
@@ -49,7 +56,9 @@ const Careers = () => {
         </section>
 
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">Open Positions</h2>
+          <h2 className="text-3xl font-bold mb-6 text-gray-800">
+            Open Positions
+          </h2>
           <div className="space-y-6">
             <JobCard
               title="Software Engineer"
@@ -79,12 +88,25 @@ const Careers = () => {
         </section>
 
         <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6 text-gray-800">How to Apply</h2>
+          <h2 className="text-3xl font-bold mb-6 text-gray-800">
+            How to Apply
+          </h2>
           <p className="text-gray-600 mb-4">
-            Ready to take the next step in your career? We'd love to hear from you! To apply for any of our open positions, please send your resume and a cover letter to <a href="mailto:careers@SBFOODS.com" className="text-orange-500 hover:underline">careers@SBFOODS.com</a>.
+            Ready to take the next step in your career? We'd love to hear from
+            you! To apply for any of our open positions, please send your resume
+            and a cover letter to{" "}
+            <a
+              href="mailto:careers@SBFOODS.com"
+              className="text-orange-500 hover:underline"
+            >
+              careers@SRVFOODS.com
+            </a>
+            .
           </p>
           <p className="text-gray-600">
-            In your cover letter, please specify the position you're applying for and tell us why you think you'd be a great fit for the SB FOODS team. We look forward to getting to know you!
+            In your cover letter, please specify the position you're applying
+            for and tell us why you think you'd be a great fit for the SRV FOODS
+            team. We look forward to getting to know you!
           </p>
         </section>
       </main>

@@ -112,7 +112,7 @@ const Contact = () => {
               <h2 className="text-2xl font-bold mb-6 text-gray-800">Contact Information</h2>
               <div className="space-y-6">
                 <ContactInfo icon={<Phone className="text-orange-500" size={24} />} title="Phone" content="+1 (555) 123-4567" />
-                <ContactInfo icon={<Mail className="text-orange-500" size={24} />} title="Email" content="support@SBFOODS.com" />
+                <ContactInfo icon={<Mail className="text-orange-500" size={24} />} title="Email" content="support@SRVFOODS.com" />
                 <ContactInfo icon={<MapPin className="text-orange-500" size={24} />} title="Address" content="123 Delivery St, Chennai, 600001" />
                 <ContactInfo icon={<MessageSquare className="text-orange-500" size={24} />} title="Live Chat" content="Available 24/7 in our app" />
               </div>

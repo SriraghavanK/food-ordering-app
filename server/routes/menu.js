@@ -16,8 +16,8 @@ router.get("/", async (req, res) => {
 // Add a new menu item (admin only)
 router.post("/", async (req, res) => {
   try {
-    const { name, description, price, image } = req.body;
-    const newItem = new MenuItem({ name, description, price, image });
+    const { name, description, price, image ,category} = req.body;
+    const newItem = new MenuItem({ name, description, price, image , category });
     const savedItem = await newItem.save();
     res.json(savedItem);
   } catch (err) {

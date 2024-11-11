@@ -1,44 +1,53 @@
-'use client'
-
-import React, { useState, FormEvent } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Mail, Lock, AlertCircle, Pizza, Utensils, Coffee, User, MapPin, Phone } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Mail,
+  Lock,
+  AlertCircle,
+  Pizza,
+  Utensils,
+  Coffee,
+  User,
+  MapPin,
+  Phone,
+  Navigation,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function Register() {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [address, setAddress] = useState('')
-  const [phone, setPhone] = useState('')
-  const [error, setError] = useState('')
-  const navigate = useNavigate()
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [location, setLocation] = useState("");
+  const [phone, setPhone] = useState("");
+  const [cuisine, setCuisine] = useState("");
+  const [error, setError] = useState("");
+  const [isRestaurant, setIsRestaurant] = useState(false);
+  const { register } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/users/register', {
-        name,
-        email,
-        password,
-        address,
-        phone
-      })
-      localStorage.setItem('token', response.data.token)
-      navigate('/')
-    } catch (err) {
-      if (axios.isAxiosError(err) && err.response) {
-        console.error('Response data:', err.response.data)
-        setError(err.response.data.message || 'Error registering user. Please try again.')
-      } else {
-        console.error('Error:', err)
-        setError('An unexpected error occurred. Please try again.')
-      }
-    }
-  }
+      const userData = isRestaurant
+        ? { name, email, password, location, phone, cuisine, location }
+        : { name, email, password, location, phone };
 
-  const foodIcons = [Pizza, Utensils, Coffee]
+      await register(userData, isRestaurant);
+
+      if (isRestaurant) {
+        navigate("/restaurant-pending");
+      } else {
+        navigate("/");
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      setError(err.message || "Error registering. Please try again.");
+    }
+  };
+
+  const foodIcons = [Pizza, Utensils, Coffee];
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-orange-400 to-red-500 p-4 overflow-hidden">
@@ -57,10 +66,16 @@ export default function Register() {
               delay: 0.5 + index * 0.2,
               duration: 0.5,
               repeat: Infinity,
-              repeatType: 'reverse',
-              repeatDelay: 5
+              repeatType: "reverse",
+              repeatDelay: 5,
             }}
-            className={`absolute ${index === 0 ? '-top-16 -left-16' : index === 1 ? '-bottom-16 -left-16' : '-top-16 -right-16'}`}
+            className={`absolute ${
+              index === 0
+                ? "-top-16 -left-16"
+                : index === 1
+                ? "-bottom-16 -left-16"
+                : "-top-16 -right-16"
+            }`}
           >
             <Icon size={64} className="text-white opacity-50" />
           </motion.div>
@@ -77,11 +92,38 @@ export default function Register() {
             transition={{ delay: 0.3, duration: 0.5 }}
             className="p-8"
           >
-            <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Create your account</h2>
+            <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
+              Create your account
+            </h2>
+            <div className="flex justify-center mb-4">
+              <button
+                onClick={() => setIsRestaurant(false)}
+                className={`px-4 py-2 rounded-l-lg ${
+                  !isRestaurant
+                    ? "bg-orange-500 text-white"
+                    : "bg-gray-200 text-gray-700"
+                }`}
+              >
+                User
+              </button>
+              <button
+                onClick={() => setIsRestaurant(true)}
+                className={`px-4 py-2 rounded-r-lg ${
+                  isRestaurant
+                    ? "bg-orange-500 text-white"
+                    : "bg-gray-200 text-gray-700"
+                }`}
+              >
+                Restaurant
+              </button>
+            </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <label htmlFor="name" className="text-sm font-medium text-gray-700 block">
-                  Name
+                <label
+                  htmlFor="name"
+                  className="text-sm font-medium text-gray-700 block"
+                >
+                  {isRestaurant ? "Restaurant Name" : "Name"}
                 </label>
                 <motion.div
                   initial={{ x: -20, opacity: 0 }}
@@ -95,15 +137,23 @@ export default function Register() {
                     type="text"
                     required
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 pl-10"
-                    placeholder="Your name"
+                    placeholder={
+                      isRestaurant ? "Enter restaurant name" : "Enter your name"
+                    }
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                   />
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                  <User
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={18}
+                  />
                 </motion.div>
               </div>
               <div className="space-y-2">
-                <label htmlFor="email-address" className="text-sm font-medium text-gray-700 block">
+                <label
+                  htmlFor="email-address"
+                  className="text-sm font-medium text-gray-700 block"
+                >
                   Email address
                 </label>
                 <motion.div
@@ -123,11 +173,17 @@ export default function Register() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                  <Mail
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={18}
+                  />
                 </motion.div>
               </div>
               <div className="space-y-2">
-                <label htmlFor="password" className="text-sm font-medium text-gray-700 block">
+                <label
+                  htmlFor="password"
+                  className="text-sm font-medium text-gray-700 block"
+                >
                   Password
                 </label>
                 <motion.div
@@ -147,12 +203,18 @@ export default function Register() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                  <Lock
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={18}
+                  />
                 </motion.div>
               </div>
               <div className="space-y-2">
-                <label htmlFor="address" className="text-sm font-medium text-gray-700 block">
-                  Address
+                <label
+                  htmlFor="location"
+                  className="text-sm font-medium text-gray-700 block"
+                >
+                  Location
                 </label>
                 <motion.div
                   initial={{ x: -20, opacity: 0 }}
@@ -165,15 +227,23 @@ export default function Register() {
                     name="address"
                     type="text"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 pl-10"
-                    placeholder="Your address"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
+                    placeholder={
+                      isRestaurant ? "Restaurant location" : "Your location"
+                    }
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
                   />
-                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                 <Navigation
+                        className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                        size={18}
+                      />
                 </motion.div>
               </div>
               <div className="space-y-2">
-                <label htmlFor="phone" className="text-sm font-medium text-gray-700 block">
+                <label
+                  htmlFor="phone"
+                  className="text-sm font-medium text-gray-700 block"
+                >
                   Phone
                 </label>
                 <motion.div
@@ -187,13 +257,50 @@ export default function Register() {
                     name="phone"
                     type="tel"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 pl-10"
-                    placeholder="Your phone number"
+                    placeholder="Phone number"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                   />
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                  <Phone
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={18}
+                  />
                 </motion.div>
               </div>
+              {isRestaurant && (
+                <>
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="cuisine"
+                      className="text-sm font-medium text-gray-700 block"
+                    >
+                      Cuisine Type
+                    </label>
+                    <motion.div
+                      initial={{ x: -20, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: 0.9 }}
+                      className="relative"
+                    >
+                      <input
+                        id="cuisine"
+                        name="cuisine"
+                        type="text"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 pl-10"
+                        placeholder="Enter cuisine type"
+                        value={cuisine}
+                        onChange={(e) => setCuisine(e.target.value)}
+                      />
+                      <Utensils
+                        className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                        size={18}
+                      />
+                      
+                    </motion.div>
+                  </div>
+                 
+                </>
+              )}
               <AnimatePresence>
                 {error && (
                   <motion.div
@@ -207,17 +314,14 @@ export default function Register() {
                   </motion.div>
                 )}
               </AnimatePresence>
-              <motion.div
+              <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                type="submit"
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
               >
-                <button
-                  type="submit"
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
-                >
-                  Register
-                </button>
-              </motion.div>
+                Register
+              </motion.button>
             </form>
           </motion.div>
           <motion.div
@@ -227,14 +331,19 @@ export default function Register() {
             className="px-8 py-4 bg-gray-50 border-t border-gray-100 text-center"
           >
             <p className="text-sm text-gray-600">
-              Already have an account?{' '}
-              <a href="/login" className="text-orange-600 hover:underline">
+              Already have an account?{" "}
+              <motion.button
+                onClick={() => navigate("/login")}
+                className="text-orange-600 hover:underline"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 Sign in
-              </a>
+              </motion.button>
             </p>
           </motion.div>
         </motion.div>
       </motion.div>
     </div>
-  )
+  );
 }

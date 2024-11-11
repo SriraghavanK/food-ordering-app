@@ -71,7 +71,33 @@ const adminAuth = async (req, res, next) => {
     res.status(401).send({ error: 'Please authenticate as an admin.' });
   }
 };
+const adminOrRestaurantAuth = async (req, res, next) => {
+  try {
+    // Get the secret pass (token) from the request
+    const token = req.header('Authorization').replace('Bearer ', '');
+    // Check if the pass is real
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    // See if this person is an admin
+    const admin = await User.findOne({ _id: decoded._id, isAdmin: true });
+    
+    // Or if they're a restaurant owner
+    const restaurant = await Restaurant.findOne({ _id: decoded._id });
+    
+    // If they're neither admin nor restaurant owner, don't let them in
+    if (!admin && !restaurant) {
+      throw new Error();
+    }
 
+    // If they passed the check, let them continue
+    req.token = token;
+    req.user = admin || restaurant;
+    next();
+  } catch (error) {
+    // If something went wrong, tell them they need to prove who they are
+    res.status(401).send({ error: 'Please authenticate as an admin or restaurant owner.' });
+  }
+};
 // Routes
 app.get('/api/restaurants', async (req, res) => {
   try {
@@ -91,6 +117,52 @@ app.get('/api/restaurants/:id', async (req, res) => {
     res.json(restaurant);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching restaurant' });
+  }
+});
+// Add menu item
+app.post('/api/restaurants/:id/menu', adminOrRestaurantAuth, async (req, res) => {
+  try {
+    const { name, description, price, image } = req.body;
+    const restaurant = await Restaurant.findById(req.params.id);
+    if (!restaurant) {
+      return res.status(404).json({ message: 'Restaurant not found' });
+    }
+    const menuItem = new MenuItem({ name, description, price, image, restaurant: req.params.id });
+    await menuItem.save();
+    res.status(201).json(menuItem);
+  } catch (error) {
+    res.status(500).json({ message: 'Error adding menu item', error: error.message });
+  }
+});
+
+// Update menu item
+app.put('/api/restaurants/:restaurantId/menu/:id', adminOrRestaurantAuth, async (req, res) => {
+  try {
+    const { name, description, price, image } = req.body;
+    const menuItem = await MenuItem.findOneAndUpdate(
+      { _id: req.params.id, restaurant: req.params.restaurantId },
+      { name, description, price, image },
+      { new: true }
+    );
+    if (!menuItem) {
+      return res.status(404).json({ message: 'Menu item not found' });
+    }
+    res.json(menuItem);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating menu item', error: error.message });
+  }
+});
+
+// Delete menu item
+app.delete('/api/restaurants/:restaurantId/menu/:id', adminOrRestaurantAuth, async (req, res) => {
+  try {
+    const menuItem = await MenuItem.findOneAndDelete({ _id: req.params.id, restaurant: req.params.restaurantId });
+    if (!menuItem) {
+      return res.status(404).json({ message: 'Menu item not found' });
+    }
+    res.json({ message: 'Menu item deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting menu item', error: error.message });
   }
 });
 
@@ -127,7 +199,58 @@ app.post('/api/menu/:id/rate', auth, async (req, res) => {
     res.status(500).json({ message: 'Error rating menu item' });
   }
 });
+// Restaurant registration route
+app.post('/api/restaurants/register', async (req, res) => {
+  try {
+    const { name, email, password, cuisine, phone, location } = req.body;
+    console.log('Attempting to register restaurant:', { name, email });
 
+    // Check if restaurant already exists
+    let restaurant = await Restaurant.findOne({ email });
+    if (restaurant) {
+      console.log('Restaurant already exists:', email);
+      return res.status(400).json({ message: 'Restaurant with this email already exists' });
+    }
+
+    // Create new restaurant - IMPORTANT: Don't hash password here
+    // Let the mongoose pre-save middleware handle the hashing
+    restaurant = new Restaurant({
+      name,
+      email,
+      password, // Raw password - will be hashed by pre-save hook
+      cuisine,
+      phone,
+      location,
+      isApproved: false,
+      isLateNight: false,
+      image: 'https://via.placeholder.com/150'
+    });
+
+    // Save restaurant - password will be hashed by pre-save hook
+    await restaurant.save();
+    console.log('Restaurant registered successfully:', restaurant.name);
+
+    const token = jwt.sign(
+      { _id: restaurant._id, isRestaurant: true },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    );
+
+    res.status(201).json({
+      token,
+      user: {
+        _id: restaurant._id,
+        name: restaurant.name,
+        email: restaurant.email,
+        isRestaurant: true,
+        isApproved: restaurant.isApproved
+      }
+    });
+  } catch (err) {
+    console.error('Restaurant registration error:', err);
+    res.status(500).json({ message: 'Server error during registration', error: err.message });
+  }
+});
 app.post('/api/restaurants', adminAuth, async (req, res) => {
   try {
     const { name, cuisine, image , isLateNight , location } = req.body;
@@ -139,6 +262,67 @@ app.post('/api/restaurants', adminAuth, async (req, res) => {
     res.status(500).json({ message: 'Error adding restaurant', error: error.message });
   }
 });
+
+// Restaurant login route
+app.post('/api/restaurants/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    console.log('Login attempt for restaurant:', email);
+
+    const restaurant = await Restaurant.findOne({ email });
+    if (!restaurant) {
+      console.log('Restaurant not found:', email);
+      return res.status(401).json({ message: 'Invalid login credentials' });
+    }
+
+    // Use bcrypt.compare() directly - no manual hashing needed
+    const isMatch = await bcrypt.compare(password, restaurant.password);
+    console.log('Password match result:', isMatch);
+
+    if (!isMatch) {
+      console.log('Password mismatch for restaurant:', email);
+      return res.status(401).json({ message: 'Invalid login credentials' });
+    }
+
+    if (!restaurant.isApproved) {
+      console.log('Restaurant not approved:', email);
+      return res.status(401).json({ message: 'Restaurant is not approved yet' });
+    }
+
+    const token = jwt.sign(
+      { _id: restaurant._id, isRestaurant: true },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    );
+
+    console.log('Login successful for restaurant:', email);
+    res.json({
+      token,
+      user: {
+        _id: restaurant._id,
+        name: restaurant.name,
+        email: restaurant.email,
+        isRestaurant: true,
+        isApproved: restaurant.isApproved
+      }
+    });
+  } catch (error) {
+    console.error('Restaurant login error:', error);
+    res.status(500).json({ message: 'Server error during login' });
+  }
+});
+
+// GET route to check approval status
+app.get('/api/restaurants/:id/status', async (req, res) => {
+  try {
+    const restaurant = await Restaurant.findById(req.params.id);
+    if (!restaurant) return res.status(404).json({ message: "Restaurant not found" });
+    res.status(200).json({ isApproved: restaurant.isApproved });
+  } catch (error) {
+    res.status(500).json({ message: "Error retrieving approval status", error });
+  }
+});
+
 app.put('/api/restaurants/:id', adminAuth, async (req, res) => {
   try {
     const { name, cuisine, image , isLateNight,location } = req.body;
@@ -172,7 +356,65 @@ app.delete('/api/restaurants/:id', adminAuth, async (req, res) => {
     res.status(500).json({ message: 'Error deleting restaurant', error: error.message });
   }
 });
+app.put('/api/restaurants/:id/approve', async (req, res) => {
+  try {
+    const restaurant = await Restaurant.findById(req.params.id);
+    if (!restaurant) {
+      return res.status(404).json({ message: 'Restaurant not found' });
+    }
+    if (restaurant.isApproved) {
+      return res.status(400).json({ message: 'Restaurant is already approved' });
+    }
+    
+    restaurant.isApproved = true;
+    // We don't need to set other fields as they should already exist
+    
+    await restaurant.save();
+    res.json(restaurant);
+  } catch (error) {
+    console.error('Error approving restaurant:', error);
+    res.status(500).json({ message: 'Error approving restaurant', error: error.message });
+  }
+});
+app.put('/api/restaurants/:id/approve', adminAuth, async (req, res) => {
+  try {
+    const { phone, email } = req.body;
+    const restaurant = await Restaurant.findById(req.params.id);
+    if (!restaurant) {
+      return res.status(404).json({ message: 'Restaurant not found' });
+    }
+    
+    restaurant.isApproved = true;
+    
+    // Update phone and email only if they are provided
+    if (phone) restaurant.phone = phone;
+    if (email) restaurant.email = email;
+    
+    await restaurant.save();
+    
+    res.json(restaurant);
+  } catch (error) {
+    console.error('Error approving restaurant:', error);
+    res.status(500).json({ message: 'Error approving restaurant', error: error.message });
+  }
+});
 
+
+app.put('/api/restaurants/:id/reject', adminAuth, async (req, res) => {
+  try {
+    const restaurant = await Restaurant.findByIdAndUpdate(
+      req.params.id,
+      { isApproved: false },
+      { new: true }
+    );
+    if (!restaurant) {
+      return res.status(404).json({ message: 'Restaurant not found' });
+    }
+    res.json(restaurant);
+  } catch (error) {
+    res.status(500).json({ message: 'Error rejecting restaurant' });
+  }
+});
 app.post('/api/restaurants/:id/menu', adminAuth, async (req, res) => {
   try {
     const { name, description, price, image,location } = req.body;
@@ -251,9 +493,113 @@ app.delete('/api/admin/orders/:id', adminAuth, async (req, res) => {
   }
 });
 
+// Restaurant authentication middleware
+const restaurantAuth = async (req, res, next) => {
+  try {
+    const token = req.header('x-auth-token') || req.header('Authorization')?.replace('Bearer ', '');
+    if (!token) {
+      return res.status(401).json({ msg: 'No token, authorization denied' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const restaurant = await Restaurant.findOne({ _id: decoded._id });
+
+    if (!restaurant) {
+      throw new Error();
+    }
+
+    req.token = token;
+    req.restaurant = restaurant;
+    next();
+  } catch (error) {
+    res.status(401).send({ error: 'Please authenticate as a restaurant owner.' });
+  }
+};
+
+// Get restaurant status
+app.get('/api/restaurants/:id/status', restaurantAuth, async (req, res) => {
+  try {
+    const restaurant = await Restaurant.findById(req.params.id);
+    if (!restaurant) {
+      return res.status(404).json({ message: 'Restaurant not found' });
+    }
+    res.json({ isApproved: restaurant.isApproved });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Get restaurant menu
+app.get('/api/restaurants/:id/menu', restaurantAuth, async (req, res) => {
+  try {
+    const menuItems = await MenuItem.find({ restaurant: req.params.id });
+    res.json(menuItems);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Get restaurant orders
+app.get('/api/restaurants/:id/orders', restaurantAuth, async (req, res) => {
+  try {
+    const orders = await Order.find({ 'items.menuItem': { $in: await MenuItem.find({ restaurant: req.params.id }).distinct('_id') } })
+      .populate('user', 'name email')
+      .populate('items.menuItem');
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Add menu item
+app.post('/api/restaurants/:id/menu', restaurantAuth, async (req, res) => {
+  try {
+    const { name, description, price, image } = req.body;
+    const menuItem = new MenuItem({ name, description, price, image, restaurant: req.params.id });
+    await menuItem.save();
+    res.status(201).json(menuItem);
+  } catch (error) {
+    res.status(500).json({ message: 'Error adding menu item', error: error.message });
+  }
+});
+
+// Update menu item
+app.put('/api/restaurants/:restaurantId/menu/:id', restaurantAuth, async (req, res) => {
+  try {
+    const { name, description, price, image } = req.body;
+    const menuItem = await MenuItem.findOneAndUpdate(
+      { _id: req.params.id, restaurant: req.params.restaurantId },
+      { name, description, price, image },
+      { new: true }
+    );
+    if (!menuItem) {
+      return res.status(404).json({ message: 'Menu item not found' });
+    }
+    res.json(menuItem);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating menu item', error: error.message });
+  }
+});
+
+// Delete menu item
+app.delete('/api/restaurants/:restaurantId/menu/:id', restaurantAuth, async (req, res) => {
+  try {
+    const menuItem = await MenuItem.findOneAndDelete({ _id: req.params.id, restaurant: req.params.restaurantId });
+    if (!menuItem) {
+      return res.status(404).json({ message: 'Menu item not found' });
+    }
+    res.json({ message: 'Menu item deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting menu item', error: error.message });
+  }
+});
+
+
+
+
 app.post('/api/users/register', async (req, res) => {
   try {
-    const { name, email, password, address, phone, isAdmin } = req.body;
+    const { name, email, password, Location, phone, isAdmin } = req.body;
     if (!name || !email || !password) {
       return res.status(400).json({ message: 'Please enter all required fields' });
     }
@@ -264,7 +610,7 @@ app.post('/api/users/register', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 8);
-    const user = new User({ name, email, password: hashedPassword, address, phone, isAdmin: isAdmin || false });
+    const user = new User({ name, email, password: hashedPassword, Location, phone, isAdmin: isAdmin || false });
     await user.save();
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
     res.status(201).json({ user, token });

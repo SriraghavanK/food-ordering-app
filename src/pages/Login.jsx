@@ -1,34 +1,45 @@
-'use client'
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Mail,
+  Lock,
+  AlertCircle,
+  Pizza,
+  Utensils,
+  Coffee,
+  HelpCircle,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from '../context/AuthContext';
 
-import React, { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Mail, Lock, AlertCircle, Pizza, Utensils, Coffee, HelpCircle } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
-
-export default function Component() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [showHelp, setShowHelp] = useState(false)
-  const navigate = useNavigate()
-  const { login } = useAuth()
+export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [showHelp, setShowHelp] = useState(false);
+  const [isRestaurant, setIsRestaurant] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
     try {
-      await login(email, password)
-      navigate('/')
+      console.log("Attempting login for:", email, "isRestaurant:", isRestaurant);
+      const result = await login(email, password, isRestaurant);
+      console.log("Login successful:", result);
+      navigate(isRestaurant ? "/restaurant-dashboard" : "/");
     } catch (err) {
-      setError('Invalid email or password. Please try again or reset your password.')
+      console.error("Login error:", err.message);
+      setError(err.message || "Invalid email or password. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
 
-  const foodIcons = [Pizza, Utensils, Coffee]
-
-  const handleRegister = () => {
-    navigate('/register') // Navigates to the register page
-  }
+  const foodIcons = [Pizza, Utensils, Coffee];
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-orange-400 to-red-500 p-4 overflow-hidden">
@@ -47,10 +58,16 @@ export default function Component() {
               delay: 0.5 + index * 0.2,
               duration: 0.5,
               repeat: Infinity,
-              repeatType: 'reverse',
-              repeatDelay: 5
+              repeatType: "reverse",
+              repeatDelay: 5,
             }}
-            className={`absolute ${index === 0 ? '-top-16 -left-16' : index === 1 ? '-bottom-16 -left-16' : '-top-16 -right-16'}`}
+            className={`absolute ${
+              index === 0
+                ? "-top-16 -left-16"
+                : index === 1
+                ? "-bottom-16 -left-16"
+                : "-top-16 -right-16"
+            }`}
           >
             <Icon size={64} className="text-white opacity-50" />
           </motion.div>
@@ -67,10 +84,38 @@ export default function Component() {
             transition={{ delay: 0.3, duration: 0.5 }}
             className="p-8"
           >
-            <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Welcome Back!</h2>
+            <h2 className="text-3xl font-bold text-center text-gray-800 mb-6"  style={{ color: 'black', fontFamily: 'cooper black' }}>
+              Welcome Back!
+            </h2 >
+            <div className="flex justify-center mb-4">
+  <button
+    onClick={() => setIsRestaurant(false)}
+    className={`px-4 py-2 rounded-l-lg transition-all duration-300 ease-in-out transform ${
+      !isRestaurant
+        ? "bg-orange-500 text-white shadow-lg hover:bg-orange-600 hover:scale-105"
+        : "bg-gray-200 text-gray-700 shadow-md hover:bg-gray-300 hover:scale-105"
+    }`}
+  >
+    User
+  </button>
+  <button
+    onClick={() => setIsRestaurant(true)}
+    className={`px-4 py-2 rounded-r-lg transition-all duration-300 ease-in-out transform ${
+      isRestaurant
+        ? "bg-orange-500 text-white shadow-lg hover:bg-orange-600 hover:scale-105"
+        : "bg-gray-200 text-gray-700 shadow-md hover:bg-gray-300 hover:scale-105"
+    }`}
+  >
+    Restaurant
+  </button>
+</div>
+
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium text-gray-700 block">
+                <label
+                  htmlFor="email"
+                  className="text-sm font-medium text-gray-700 block"
+                >
                   Email address
                 </label>
                 <motion.div
@@ -88,11 +133,17 @@ export default function Component() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 pl-10"
                     required
                   />
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                  <Mail
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={18}
+                  />
                 </motion.div>
               </div>
               <div className="space-y-2">
-                <label htmlFor="password" className="text-sm font-medium text-gray-700 block">
+                <label
+                  htmlFor="password"
+                  className="text-sm font-medium text-gray-700 block"
+                >
                   Password
                 </label>
                 <motion.div
@@ -110,7 +161,10 @@ export default function Component() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 pl-10"
                     required
                   />
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                  <Lock
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={18}
+                  />
                 </motion.div>
               </div>
               <AnimatePresence>
@@ -126,17 +180,15 @@ export default function Component() {
                   </motion.div>
                 )}
               </AnimatePresence>
-              <motion.div
+              <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                type="submit"
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
+                disabled={isLoading}
               >
-                <button
-                  type="submit"
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
-                >
-                  Sign in
-                </button>
-              </motion.div>
+                {isLoading ? "Signing in..." : "Sign in"}
+              </motion.button>
             </form>
           </motion.div>
           <motion.div
@@ -158,7 +210,7 @@ export default function Component() {
               {showHelp && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
+                  animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
                   className="mt-4 text-sm text-gray-600"
                 >
@@ -169,16 +221,25 @@ export default function Component() {
                     <li>Try resetting your password</li>
                     <li>Contact support if issues persist</li>
                   </ul>
-                  <a href="#" className="block mt-2 text-orange-600 hover:underline">Reset your password</a>
-                  <a href="#" className="block mt-1 text-orange-600 hover:underline">Contact support</a>
+                  <a
+                    href="#"
+                    className="block mt-2 text-orange-600 hover:underline"
+                  >
+                    Reset your password
+                  </a>
+                  <a
+                    href="#"
+                    className="block mt-1 text-orange-600 hover:underline"
+                  >
+                    Contact support
+                  </a>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {/* Add Register Link Here */}
             <div className="mt-4">
               <motion.button
-                onClick={handleRegister}
+                onClick={() => navigate("/register")}
                 className="text-orange-600 hover:underline"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -190,5 +251,5 @@ export default function Component() {
         </motion.div>
       </motion.div>
     </div>
-  )
+  );
 }

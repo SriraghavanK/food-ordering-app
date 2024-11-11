@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import logo from '../logo.jpg';
-import { Link } from 'react-router-dom';
+import logo from '../logo.png';
+import { Link , useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { ShoppingCart, User as UserIcon, Menu as MenuIcon, X, Moon } from 'lucide-react';
+import { ShoppingCart, User as UserIcon, Menu as MenuIcon, X, Moon, Home, Utensils, Shield , LogOut } from 'lucide-react';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logout } = useAuth();
   const [isLateNight, setIsLateNight] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const checkLateNightHours = () => {
@@ -17,12 +18,45 @@ const Navbar = () => {
     };
 
     checkLateNightHours();
-    const interval = setInterval(checkLateNightHours, 60000); // Check every minute
+    const interval = setInterval(checkLateNightHours, 1000); 
 
     return () => clearInterval(interval);
   }, []);
 
-  const linkClass = "relative text-gray-700 hover:text-orange-500 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 group";
+  const linkClass = "flex items-center text-gray-700 hover:text-orange-500 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 group relative";
+  const underlineClass = "absolute left-0 bottom-0 w-full h-0.5 bg-orange-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left";
+  const mobileLinkClass = "flex items-center text-gray-700 hover:text-orange-500 px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 group";
+  const mobileUnderlineClass = "absolute left-0 bottom-0 h-0.5 bg-orange-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left";
+  const isRestaurantDashboard = location.pathname.startsWith('/restaurant-dashboard');
+
+ 
+  if (isRestaurantDashboard) {
+    return (
+      <nav className="bg-white shadow-lg font-sans">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <Link to="/" className="flex-shrink-0">
+              <motion.img
+                className="h-10 rounded w-auto"
+                src="/logo.png"
+                alt="Company Logo"
+                initial={{ scale: 1 }}
+                whileHover={{ scale: 1.1 }}
+                transition={{ duration: 0.3 }}
+              />
+            </Link>
+            <button
+              onClick={logout}
+              className="flex items-center text-white bg-orange-500 border border-orange-500 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+            >
+              <LogOut className="mr-2" size={20} />
+              Logout
+            </button>
+          </div>
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <nav className="bg-white shadow-lg font-sans">
@@ -41,82 +75,70 @@ const Navbar = () => {
             </Link>
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-4">
-                {/* Home Link */}
                 <Link to="/" className={linkClass}>
+                  <Home className="mr-2" size={20} />
                   Home
-                  <span className="absolute left-0 bottom-0 w-full h-0.5 bg-orange-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                  <span className={underlineClass}></span>
                 </Link>
-
-                {/* Restaurants Link */}
                 <Link to="/restaurants" className={linkClass}>
+                  <Utensils className="mr-2" size={20} />
                   Restaurants
-                  <span className="absolute left-0 bottom-0 w-full h-0.5 bg-orange-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                  <span className={underlineClass}></span>
                 </Link>
-
-                {/* Late Night Link */}
                 {isLateNight && (
                   <Link to="/late-night" className={linkClass}>
-                    <Moon className="inline-block mr-1" size={16} />
+                    <Moon className="mr-2" size={20} />
                     Late Night
-                    <span className="absolute left-0 bottom-0 w-full h-0.5 bg-orange-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                    <span className={underlineClass}></span>
                   </Link>
                 )}
-
-                {/* Admin Panel Link */}
                 {user && user.isAdmin && (
                   <Link to="/admin" className={linkClass}>
+                    <Shield className="mr-2" size={20} />
                     Admin Panel
-                    <span className="absolute left-0 bottom-0 w-full h-0.5 bg-orange-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                    <span className={underlineClass}></span>
                   </Link>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Right section */}
           <div className="hidden md:block">
             <div className="ml-4 flex items-center md:ml-6">
-              <motion.div whileHover="hover">
-                <motion.div variants={{ hover: { scale: 1.1, transition: { duration: 0.2 } } }}>
-                  <Link to="/cart" className="text-gray-700 hover:text-orange-500 p-2 px-10 rounded-full transition-colors duration-200">
-                    <ShoppingCart className="h-6 w-6" />
-                  </Link>
-                </motion.div>
-              </motion.div>
+              <Link to="/cart" className={linkClass}>
+                <ShoppingCart className="mr-2" size={20} />
+                Cart
+                <span className={underlineClass}></span>
+              </Link>
 
               {user ? (
                 <div className="ml-3 relative">
                   <div className="flex items-center">
-                    <motion.div whileHover="hover">
-                      <motion.div variants={{ hover: { scale: 1.1, transition: { duration: 0.2 } } }}>
-                        <Link to="/profile" className="text-gray-700 hover:text-orange-500 p-2 px-12 rounded-full transition-colors duration-200">
-                          <UserIcon className="h-6 w-6" />
-                        </Link>
-                      </motion.div>
-                    </motion.div>
+                    <Link to="/profile" className={linkClass}>
+                      <UserIcon className="mr-2" size={20} />
+                      Profile
+                      <span className={underlineClass}></span>
+                    </Link>
                     <button
-  onClick={logout}
-  className="relative text-white bg-orange-500 border border-orange-500 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
->
-  Logout
-</button>
-
-
+                      onClick={logout}
+                      className="ml-2 relative text-white bg-orange-500 border border-orange-500 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                    >
+                      Logout
+                    </button>
                   </div>
                 </div>
               ) : (
                 <Link
-  to="/login"
-  className="relative text-white bg-orange-500 border border-orange-500 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
->
-  Login
-</Link>
-
+                  to="/login"
+                  className="flex items-center ml-2 relative text-white bg-orange-500 border border-orange-500 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                >
+                  <UserIcon className="mr-2" size={20} />
+                  Login
+                </Link>
               )}
             </div>
           </div>
 
-          {/* Mobile menu button */}
           <div className="-mr-2 flex md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -137,7 +159,7 @@ const Navbar = () => {
       </div>
 
       <motion.div
-        className="md:hidden"
+        className={`md:hidden overflow-hidden ${isOpen ? "pointer-events-auto" : "pointer-events-none"}`}
         id="mobile-menu"
         initial={false}
         animate={isOpen ? "open" : "closed"}
@@ -147,41 +169,69 @@ const Navbar = () => {
         }}
       >
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <Link to="/" className={linkClass}>
-            Home
-            <span className="absolute left-0 bottom-0 w-full h-0.5 bg-orange-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+          <Link to="/" className={mobileLinkClass}>
+            <span className="relative">
+              <Home className="mr-2 inline" size={20} />
+              Home
+              <span className={`${mobileUnderlineClass} w-full`}></span>
+            </span>
           </Link>
-          <Link to="/restaurants" className={linkClass}>
-            Restaurants
-            <span className="absolute left-0 bottom-0 w-full h-0.5 bg-orange-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+          <Link to="/restaurants" className={mobileLinkClass}>
+            <span className="relative">
+              <Utensils className="mr-2 inline" size={20} />
+              Restaurants
+              <span className={`${mobileUnderlineClass} w-full`}></span>
+            </span>
           </Link>
-          <Link to="/cart" className={linkClass}>
-            Cart
-            <span className="absolute left-0 bottom-0 w-full h-0.5 bg-orange-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+          <Link to="/cart" className={mobileLinkClass}>
+            <span className="relative">
+              <ShoppingCart className="mr-2 inline" size={20} />
+              Cart
+              <span className={`${mobileUnderlineClass} w-full`}></span>
+            </span>
           </Link>
-          <Link to="/late-night" className={linkClass}>
-            Late Night
-            <span className="absolute left-0 bottom-0 w-full h-0.5 bg-orange-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
-          </Link>
+          {isLateNight && (
+            <Link to="/late-night" className={mobileLinkClass}>
+              <span className="relative">
+                <Moon className="mr-2 inline" size={20} />
+                Late Night
+                <span className={`${mobileUnderlineClass} w-full`}></span>
+              </span>
+            </Link>
+          )}
           {user && user.isAdmin && (
-            <Link to="/admin" className={linkClass}>
-              Admin Panel
-              <span className="absolute left-0 bottom-0 w-full h-0.5 bg-orange-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+            <Link to="/admin" className={mobileLinkClass}>
+              <span className="relative">
+                <Shield className="mr-2 inline" size={20} />
+                Admin Panel
+                <span className={`${mobileUnderlineClass} w-full`}></span>
+              </span>
             </Link>
           )}
           {user ? (
             <>
-              <Link to="/profile" className={linkClass}>
-                Profile
-                <span className="absolute left-0 bottom-0 w-full h-0.5 bg-orange-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+              <Link to="/profile" className={mobileLinkClass}>
+                <span className="relative">
+                  <UserIcon className="mr-2 inline" size={20} />
+                  Profile
+                  <span className={`${mobileUnderlineClass} w-full`}></span>
+                </span>
               </Link>
-              <button onClick={logout} className="text-gray-700 hover:text-orange-500 block px-3 py-2 rounded-md text-base font-medium w-full text-left transition-colors duration-200">
-                Logout
+              <button onClick={logout} className={`${mobileLinkClass} w-full text-left`}>
+                <span className="relative">
+                  <X className="mr-2 inline" size={20} />
+                  Logout
+                  <span className={`${mobileUnderlineClass} w-full`}></span>
+                </span>
               </button>
             </>
           ) : (
-            <Link to="/login" className="relative text-orange-500 border border-orange-500 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover:bg-orange-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
-              Login
+            <Link to="/login" className={`${mobileLinkClass} text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500`}>
+              <span className="relative">
+                <UserIcon className="mr-2 inline" size={20} />
+                Login
+                <span className={`${mobileUnderlineClass} w-full bg-current`}></span>
+              </span>
             </Link>
           )}
         </div>

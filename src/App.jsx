@@ -14,9 +14,11 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Footer from './components/Footer';
 import AdminPanel from './pages/Adminpanel';
+import RestaurantPending from './pages/RestaurantPending';
 import ProtectedRoute from './components/ProtectedRoute';
 import Restaurants from './pages/Restaurants';
 import About from'./components/About';
+
 import Partners from'./components/Partners';
 import Careers from'./components/Careers';
 import Terms from './components/Terms';
@@ -24,6 +26,7 @@ import Contact from './components/Contact';
 import FAQ from './components/FAQ';
 import ScrollToTop from './components/ScrollToTop';
 import LateNightDelivery from './pages/LateNightDelivery';
+import RestaurantDashboard from './pages/RestaurantDashboard';
 
 const App = () => {
   return (
@@ -47,9 +50,11 @@ const App = () => {
                   <Route path="/cart" element={<Cart />} />
                   <Route path="/checkout" element={<Checkout />} />
                   <Route path="/order-tracking" element={<OrderTracking />} />
+                  <Route path="/restaurant-pending" element={<RestaurantPending />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
                   <Route path="/restaurants" element={<Restaurants />} />
+                  <Route path="/restaurant-dashboard" element={<ProtectedRoute restaurantOnly><RestaurantDashboard /></ProtectedRoute>} />
                   <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                   <Route path="/admin" element={<ProtectedRoute adminOnly><AdminPanel /></ProtectedRoute>} />
                   <Route path="/restaurants/:restaurantId" element={<Menu />} />

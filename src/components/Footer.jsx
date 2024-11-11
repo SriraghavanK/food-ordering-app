@@ -10,7 +10,7 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="space-y-6">
-            <h2 className="text-3xl font-bold text-white">SB FOODS</h2>
+            <h2 className="text-3xl font-bold "  style={{ color: 'white', fontFamily: 'cooper black' }}>SRV BITES</h2>
             <p className="text-sm">Delicious meals delivered to your doorstep</p>
             <div className="flex space-x-4">
               <a href="#" className="hover:text-white transition-colors">
@@ -77,7 +77,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-12 pt-8 border-t border-gray-700 flex flex-wrap justify-between items-center">
-          <p className="text-sm">&copy; 2024 SB FOODS All rights reserved.</p>
+          <p className="text-sm">&copy; 2024 SRV BITES All rights reserved.</p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <div className="flex items-center space-x-2">
               <FontAwesomeIcon icon={faUtensils} size="lg" />
