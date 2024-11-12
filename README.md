@@ -1,4 +1,5 @@
 To run our project do the following steps:-
+
 For Frontend:
 type the following command:**npm install**
 after installing the dependencies Type the command : **npm start**
