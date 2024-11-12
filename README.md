@@ -15,6 +15,9 @@ and thats it now you connected the backend with the frontend Now have fun explor
 
 Roles:-
 Sriraghavan k(Team Leader) : Handling Backend Services
+
 Srimanjunath R :Handling Frontend Works
+
 Vignesh M : Handling Databases and other works
+
 Raja E : Testing the Websites and Providing additional helps 
